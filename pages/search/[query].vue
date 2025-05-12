@@ -4,7 +4,6 @@
         <div v-else-if="error" class="w-full pt-16 text-center"> <span class="text-red-400 font-medium">{{ error }}</span></div>
 
         <div v-else>
-            <!-- Filter -->
             <div class="w-full flex justify-start items-center py-3 gap-3">
                 <div class="bg-neutral-200 text-background px-3 py-1.5 rounded-full text-sm cursor-pointer">
                     All
@@ -27,14 +26,13 @@
                 </div>
             </div>
 
-            <!-- Top result section -->
             <section class="mt-5 mb-6 flex justify-between items-center h-72 gap-4">
                 <div class="flex-1/2 group">
                     <h2 class="text-xl font-bold text-white mb-2">Top result</h2>
 
                     <div v-if="artists.length > 0" 
                         class="bg-neutral-900 hover:bg-neutral-800 transition-colors duration-200 ease-out p-5 rounded-md cursor-pointer
-                              relative pb-7"
+                              relative pb-7" @click="selectArtist(artists[0])"
                     >
                         <div class="flex flex-col items-start text-left">
                             <img 
@@ -60,7 +58,7 @@
                     <h2 class="text-xl font-bold text-white mb-2">Songs</h2>
 
                     <div class="rounded-md w-full h-full flex flex-col justify-between items-center">
-                        <div v-for="(track, index) in tracks.slice(0, 4)" :key="`track-${index}`" class="text-neutral-300 hover:bg-neutral-800 transition-colors cursor-pointer rounded-md w-full h-13 flex items-center justify-between">
+                        <div v-for="(track, index) in tracks.slice(0, 4)" :key="`track-${index}`" class="text-neutral-300 hover:bg-neutral-800 transition-colors cursor-pointer rounded-md w-full h-13 flex items-center justify-between" @click="selectTrack(track)">
                             <div class="flex items-center rounded-md px-2">
                                 <img 
                                     :src="track.album.images && track.album.images.length > 0 ? track.album.images[track.album.images.length - 1].url : '/default-album.png'" 
@@ -80,12 +78,11 @@
                 </div>
             </section>
 
-            <!-- Artists section -->
             <div v-if="artists.length > 0" class="my-8">
                 <h2 class="text-xl font-bold text-white mb-4">Artists</h2>
 
                 <div class="flex justify-between items-center">
-                    <div v-for="(artist, index) in artists" :key="`artist-${index}`" class="hover:bg-neutral-900 transition-colors p-2 rounded-md cursor-pointer w-40 flex flex-col items-center">
+                    <div v-for="(artist, index) in artists" :key="`artist-${index}`" class="hover:bg-neutral-900 transition-colors p-2 rounded-md cursor-pointer w-40 flex flex-col items-center" @click="selectArtist(artist)">
                         <img 
                             :src="artist.images && artist.images.length > 0 ? artist.images[0].url : '/default-artist.png'" 
                             alt="Artist" 
@@ -98,12 +95,11 @@
                 </div>
             </div>
 
-            <!-- Albums section -->
             <div v-if="albums.length > 0" class="my-12">
                 <h2 class="text-xl font-bold text-white mb-4">Albums</h2>
 
                 <div class="flex justify-between items-center">
-                    <div v-for="(album, index) in albums" :key="`album-${index}`" class="hover:bg-neutral-900 transition-colors p-2 rounded-md cursor-pointer w-40 flex flex-col items-center">
+                    <div v-for="(album, index) in albums" :key="`album-${index}`" class="hover:bg-neutral-900 transition-colors p-2 rounded-md cursor-pointer w-40 flex flex-col items-center" @click="selectAlbum(album)">
                         <img 
                             :src="album.images && album.images.length > 0 ? album.images[0].url : '/default-album.png'" 
                             alt="Album" 
@@ -116,12 +112,11 @@
                 </div>
             </div>
 
-            <!-- Playlists section -->
             <div v-if="playlists.length > 0" class="my-12">
                 <h2 class="text-xl font-bold text-white mb-4">Playlists</h2>
 
                 <div class="flex justify-start items-center">
-                    <div v-for="(playlist, index) in filteredPlaylists" :key="`playlist-${index}`" class="hover:bg-neutral-900 transition-colors p-2 rounded-md cursor-pointer w-40 flex flex-col items-center">
+                    <div v-for="(playlist, index) in filteredPlaylists" :key="`playlist-${index}`" class="hover:bg-neutral-900 transition-colors p-2 rounded-md cursor-pointer w-40 flex flex-col items-center" @click="selectPlaylist(playlist)">
                         <img 
                             :src="playlist.images && playlist.images.length > 0 ? playlist.images[0].url : '/default-playlist.png'" 
                             alt="Playlist" 
@@ -138,8 +133,10 @@
 </template>
 
 <script setup>
-    import { ref, computed, onMounted } from 'vue';
+    import { useSpotifyPlayer } from '~/composables/useSpotifyPlayer'
     import { useRoute } from 'vue-router';
+
+    const { initPlayer, play } = useSpotifyPlayer()
 
     const route = useRoute();
     const query = route.params.query;
@@ -205,5 +202,23 @@
         } finally {
             loading.value = false;
         }
+
+        initPlayer();
     });
+
+    function selectTrack(track) {
+        play(track.uri)
+    }
+
+    function selectArtist(artist) {
+        play(undefined, artist.uwri)    // plays the artist context
+    }
+
+    function selectAlbum(album) {
+        play(undefined, album.uri)     // plays the album context
+    }
+
+    function selectPlaylist(playlist) {
+        play(undefined, playlist.uri)  // plays the playlist context
+    }
 </script>

@@ -43,6 +43,16 @@ export default defineNuxtConfig({
     devServer: {
         host: '127.0.0.1',
         port: 3000
-    }
+    },
+    app: {
+        head: {
+            script: [
+                {
+                    src: 'https://sdk.scdn.co/spotify-player.js',
+                    defer: true,
+                },
+            ],
+        },
+    },
 });
 
