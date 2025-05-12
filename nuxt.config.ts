@@ -45,3 +45,4 @@ export default defineNuxtConfig({
         port: 3000
     }
 });
+
