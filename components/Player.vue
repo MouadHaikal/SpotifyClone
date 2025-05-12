@@ -1,6 +1,6 @@
 <template>
-    <div class="absolute bottom-0 w-full h-18 flex items-center px-4">
-        <div class="flex items-center space-x-3">
+    <div class="absolute bottom-0 w-full h-18 flex items-center justify-center px-4">
+        <div class="flex items-center space-x-3 absolute left-5">
             <img
                 v-if="currentTrack?.album?.images?.length"
                 :src="currentTrack.album.images[0].url"
@@ -39,7 +39,7 @@
             </button>
         </div>
 
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-2 absolute right-7">
             <Icon name="cuida:volume-2-outline" class="size-5 text-neutral-300" />
 
             <input
